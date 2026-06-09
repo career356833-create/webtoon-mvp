@@ -36,18 +36,36 @@ export default function Home() {
     setForm((prev) => ({ ...prev, [key]: value }));
   };
 
-  const fillExample = () => {
-    setForm({
-      genre: "일상개그",
-      concept: "2000년대 PC방 추억을 다룬 코믹 웹툰",
-      character: "황방울, 30대 남자, 허세가 있지만 속은 착함, 게임과 할인행사에 약함",
-      episode: "다이소에 갔다가 이상한 물건을 사면서 벌어지는 하루",
-      cutCount: "8",
-      artStyle: "한국 웹툰 스타일, 코믹한 표정, 선명한 선화, 과장된 리액션",
-      notes: "마지막 컷은 다음 화가 궁금해지게 끝내기",
-    });
+  const generateRandomIdea = async () => {
+    try {
+      const response = await fetch("/api/random-idea", {
+        method: "POST",
+      });
+  
+      const data = await response.json();
+  
+      if (!data.result) {
+        alert("AI 기획 생성 결과가 비어 있습니다.");
+        return;
+      }
+  
+      const idea = JSON.parse(data.result);
+  
+      setForm({
+        genre: idea.genre || "",
+        concept: idea.concept || "",
+        character: idea.character || "",
+        episode: idea.episode || "",
+        cutCount: idea.cutCount || "",
+        artStyle: idea.artStyle || "",
+        notes: idea.notes || "",
+      });
+    } catch (error) {
+      console.error(error);
+      alert("AI 기획 생성 실패");
+    }
   };
-
+  
   const resetForm = () => {
     setForm({
       genre: "",
@@ -112,7 +130,7 @@ export default function Home() {
 
               <div className="flex gap-2">
                 <button
-                  onClick={fillExample}
+                  onClick={generateRandomIdea}
                   className="rounded-xl bg-slate-700 px-4 py-2 text-sm font-bold text-white hover:bg-slate-600"
                 >
                   🎲 예시 자동입력

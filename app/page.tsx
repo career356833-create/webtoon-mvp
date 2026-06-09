@@ -91,7 +91,15 @@ export default function Home() {
 
       const data = await response.json();
 
-      if (data.result) setResult(data.result);
+      if (data.result) {
+        const cleaned = data.result
+          .replace(/\*\*/g, "")
+          .replace(/^#+\s*$/gm, "")
+          .replace(/---/g, "")
+          .trim();
+      
+        setResult(cleaned);
+      }
       else if (data.error) setResult("API 오류: " + data.error);
       else setResult("응답 오류:\n" + JSON.stringify(data, null, 2));
     } catch (error) {
